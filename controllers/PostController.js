@@ -9,6 +9,7 @@ const GetAllPosts = async (req, res) => {
         res.json({massage: err});
     }
 };
+    
 
 const CreateNewPost = async (req, res) => {
     const post = new Post({

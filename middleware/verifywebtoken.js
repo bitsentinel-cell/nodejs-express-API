@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-function verifyToken(req, res, next) {
+const {defaults} = require("joi");
+const verifyToken = (req, res, next) => {
     const token = req.headers['auth-token'];
     if (!token) {
         return res.status(403).send({
@@ -12,8 +13,13 @@ function verifyToken(req, res, next) {
                 message: 'Failed to authenticate token.'
             });
         }
+        req.user = decoded.UserInfo.email;
+        req.roles = decoded.UserInfo.roles;
+
         req.decoded = decoded;
         next();
     });
 }
+
 module.exports = verifyToken;
+

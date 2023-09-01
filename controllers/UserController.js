@@ -2,14 +2,16 @@ const User = require('../models/Users')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {validateRegister , loginValidation} = require('../utils/validation');
+const ROLES_LIST = require('../config/roles_list');
 
 const registerUser = async (req , res) => {
 
    const {error} = validateRegister(req.body);
    if(error) return res.status(400).send(error.details[0].message);
 
-    const {username , email , password} = req.body;
-    if(!username || !email || !password){
+    const {username , email , password  } = req.body;
+
+    if(!username || !email || !password ) {
         res.status(400)
         throw new Error( "all fields are mandetory!!")
     }
@@ -25,9 +27,11 @@ const registerUser = async (req , res) => {
         username,
         email,
         password: hashed,
+        roles: ROLES_LIST.user,
     });
 
     console.log(user);
+
     if(user){
         res.status(201).json({_id: user.id, email: user.email})
     }else{
@@ -51,7 +55,8 @@ const userLogin = async (req , res) => {
         res.status(400);
         throw new Error("password is not valid");
     }
-    const token = jwt.sign({_id: foundUser.id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "3m"});
+    const roles = Object.values(foundUser.role);
+    const token = jwt.sign({UserInfo: {email: foundUser.email , roles: roles} , _id: foundUser.id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "10m"});
 
     res.status(200).json({token});
 }
@@ -61,4 +66,5 @@ const CurrentUser = async (req , res) => {
 
 module.exports = {
     registerUser , userLogin , CurrentUser
-};
+ 
+}

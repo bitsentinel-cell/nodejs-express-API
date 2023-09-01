@@ -4,6 +4,7 @@ const port = 8080;
 const mongoose = require('mongoose');
 const PostsRoutes = require('./routes/PostsRoutes');
 const UserRoutes = require('./routes/UserRoutes');
+const TicketRoutes = require('./routes/TicketRoutes');
 require('dotenv/config');
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -11,8 +12,10 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-app.use('/posts' , PostsRoutes);
+app.use('/api/posts' , PostsRoutes);
 app.use('/api/users' , UserRoutes);
+app.use('/api/tickets' ,TicketRoutes); 
+
 
 
 app.listen(port, () => {
